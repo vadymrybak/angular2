@@ -2,14 +2,27 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams, HttpHeaders} from "@angular/common/http";
 import { Observable, forkJoin } from "rxjs";
 import {map} from "rxjs/operators";
+import SurveyDetails from "./models/survey-details";
+import BasicErrors from "./models/basic-errors";
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
-  
+
+// LIVE LINKS
+// const links = {
+//   checkProject: "data/checkProject.php?pnum=",
+//   checkJSONpath : "data/checkJSON.php?jpath=",
+//   getDetails: "data/getDetails.php",
+//   updateXML: "/api/updateXML"
+// };
+
+// TEST LINKS
 const links = {
     checkProject: "/api/checkProjectNumber/",
-    checkJSONpath : "/api/checkJSONpath/"
+    checkJSONpath : "/api/checkJSONpath/",
+    getDetails: "/api/getDetails",
+    updateXML: "/api/updateXML"
 };
 
 @Injectable({
@@ -19,19 +32,27 @@ export class AppDataService {
 
   constructor(private http:HttpClient) { }
 
-  checkProjectNumber(): Observable<Response> {
-    return this.http.get(links.checkProject).pipe(
-        map(res => res['payload'])
+  // Gets project details
+  getProjectDetails(projectNumber: string): Observable<SurveyDetails> {
+    return this.http.get(links.getDetails).pipe(
+      map(res => res['payload'])
     );
   };
 
-  checkBasicSetup(): Observable<any>  {
-    
+  // Updates project's XML
+  updateXML(projectNumber: string, jsonPath: string): Observable<Response> {
+    return this.http.get(links.updateXML).pipe(
+      map(res => res['payload'])
+    );
+  };
+
+  // Checks of project and JSON file exist
+  checkBasicSetup(projectNumber: string, JSONpath: string): Observable<any>  {
     return forkJoin([
-      this.http.get(links.checkProject).pipe(
+      this.http.get(`${links.checkProject}${projectNumber}`).pipe(
         map(res => res['payload'])
       ),
-      this.http.get(links.checkJSONpath).pipe(
+      this.http.get(`${links.checkJSONpath}${JSONpath}`).pipe(
         map(res => res['payload'])
       )
     ])
@@ -45,7 +66,6 @@ export class AppDataService {
         }
       )
     );
-
   } 
 
 

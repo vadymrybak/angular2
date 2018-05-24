@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {AppDataService} from "./app-data.service";
 import { Observable, Subscription } from 'rxjs';
 import {NgForm} from '@angular/forms';
+import SurveyDetails from './models/survey-details';
+import BasicErrors from './models/basic-errors';
 
 @Component({
   selector: 'app-root',
@@ -11,11 +13,16 @@ import {NgForm} from '@angular/forms';
 export class AppComponent {
   activeStage = 1;
   loading: boolean = false;
+
   basicSetup: Subscription;
-  errors = {
-    checkProject: false,
-    checkJSONpath: false
+  projectDetails: Subscription;
+  completeView: Subscription;
+
+  errors: BasicErrors = {
+    checkJSONpath: false,
+    checkProject: false
   };
+  surveyDetails: SurveyDetails;
   readyForStage2: boolean = true;
   readyForStage3: boolean = false;
 
@@ -23,7 +30,8 @@ export class AppComponent {
   projectNumber: string = "";
   jsonPath: string = "";
 
-  constructor(private appDataService: AppDataService) {}
+  constructor(private appDataService: AppDataService) {
+  }
 
   resetErrors(){
     this.errors = {
@@ -51,12 +59,29 @@ export class AppComponent {
   }
 
   ngOnInit() {
-   
+
   }
 
   ngOnDestroy(){
     this.basicSetup.unsubscribe();
+    this.projectDetails.unsubscribe();
   }
+
+  detailsCancel() {
+    this.activeStage = 1;
+    this.readyForStage2 = false;
+    this.readyForStage3 = false;
+  };
+
+  detailsConfirmed() {
+    this.loading = true;
+    this.completeView = this.appDataService.updateXML(this.projectNumber, this.jsonPath).subscribe(result => {
+      console.log(result);
+      this.readyForStage3 = true;
+      this.activeStage = 3;
+      this.loading = false;
+    });
+  };
 
   submitBasic() {
     this.resetErrors();
@@ -65,7 +90,7 @@ export class AppComponent {
     // Check if project exists
     // Check if URL file exists
     this.loading = true;
-    this.basicSetup = this.appDataService.checkBasicSetup().subscribe(data => 
+    this.basicSetup = this.appDataService.checkBasicSetup(this.projectNumber, this.jsonPath).subscribe(data => 
       {
         console.log(data);
         this.loading = false;
@@ -79,6 +104,9 @@ export class AppComponent {
           this.readyForStage2 = true;
           this.activeStage = 2;
           // Proceed to fetch parameters
+          this.projectDetails = this.appDataService.getProjectDetails(this.projectNumber).subscribe(project_details_data => {
+            this.surveyDetails = project_details_data;
+          });
         }
       }
     );

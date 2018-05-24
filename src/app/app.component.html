@@ -6,7 +6,7 @@
   <!-- HEADER MENU -->
   <div class="ui menu">
     <div class="item">
-      <img src="../assets/logo.png" alt="RN SSI LOGO">
+      <img src="assets/logo.png" alt="RN SSI LOGO">
     </div>
     <div class="name">
       Upsiide Plus
@@ -41,7 +41,7 @@
 
   <div class="ui piled segment segment1" *ngIf="activeStage === 1" [ngClass]="{ 'active': activeStage === 1,  'inactive': activeStage !== 1 }">
       <h4 class="ui dividing header">Please complete the form</h4>
-      
+
       <form class="ui form">
           <div class="field">
             <label>Project Number</label>
@@ -55,12 +55,50 @@
       </form>
   </div>
 
-  <div class="ui piled segment segment2" *ngIf="activeStage === 2" [ngClass]="{ 'active': activeStage === 2,  'inactive': activeStage !== 2 }" >
+  <div class="ui piled segment segment2" *ngIf="activeStage === 2 && surveyDetails" [ngClass]="{ 'active': activeStage === 2,  'inactive': activeStage !== 2 }" >
       <h4 class="ui dividing header">Please review and confirm this is the project you want to modify</h4>
+      <div class="ui grid">
+          <div class="four wide column">
+              <table class="ui striped table">
+                <tbody>
+                  <tr>
+                    <td class="tdCaption">Creator</td>
+                    <td>{{surveyDetails.creator}}</td>
+                  </tr>
+                  <tr>
+                    <td class="tdCaption">Project Number</td>
+                    <td>{{surveyDetails.projectNumber}}</td>
+                  </tr>
+                  <tr>
+                    <td class="tdCaption">Project Name</td>
+                    <td>{{surveyDetails.projectName}}</td>
+                  </tr>
+                  <tr>
+                    <td class="tdCaption">Last Edit Date</td>
+                    <td>{{surveyDetails.lastEditDate}}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <button class="ui button myButton" (click)="detailsCancel()">
+                  Cancel
+              </button>
+              <button class="ui primary button myButton" (click)="detailsConfirmed()">
+                  Continue
+              </button>
+          </div>
+          <div class="twelve wide column">
+            <div class="ui form">
+              <div class="field">
+                <label>Survey XML</label>
+                <textarea name="txtXML" class="txtXML" [(ngModel)]="surveyDetails.xml"></textarea>
+              </div>
+            </div>
+          </div>
+      </div>
   </div>
 
   <div class="ui piled segment segment3" *ngIf="activeStage === 3" [ngClass]="{ 'active': activeStage === 3,  'inactive': activeStage !== 3 }" >
-      Stage 3
+      <h4 class="ui dividing header">Results</h4>
   </div>
 
 </div>

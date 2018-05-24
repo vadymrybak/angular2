@@ -44,3 +44,16 @@ form {
     width: 50%;
     margin: 100px auto;
 }
+
+.txtXML {
+    width:100%;
+}
+
+.tdCaption {
+    font-weight: bold;
+}
+
+.myButton {
+    margin: 0;
+    width:50%;
+}
