@@ -1,20 +1,66 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
 
+
+<div class="ui container">
+
+
+  <!-- HEADER MENU -->
+  <div class="ui menu">
+    <div class="item">
+      <img src="../assets/logo.png" alt="RN SSI LOGO">
+    </div>
+    <div class="name">
+      Upsiide Plus
+    </div>
+  </div>
+
+
+  <!-- SMALL PAGINATION -->
+  <div class="navigation">
+    <ul>
+      <li [class.active]="activeStage === 1" (click)="setActive(1)">1 - Setup</li>
+      <li [class.active]="activeStage === 2" (click)="setActive(2)">2 - Confirmation</li>
+      <li [class.active]="activeStage === 3" (click)="setActive(3)">3 - Results</li>
+    </ul> 
+  </div>
+
+  <div class="ui active centered inline loader" *ngIf="loading"></div>
+
+  <div class="ui warning message" *ngIf="errors.checkProject">
+      <div class="header">
+        Warning
+      </div>
+      The specified project number was not found on CA server.
+    </div>
+
+    <div class="ui warning message" *ngIf="errors.checkJSONpath">
+        <div class="header">
+          Warning
+        </div>
+        JSON file does not exist in the specified path.
+      </div>
+
+  <div class="ui piled segment segment1" *ngIf="activeStage === 1" [ngClass]="{ 'active': activeStage === 1,  'inactive': activeStage !== 1 }">
+      <h4 class="ui dividing header">Please complete the form</h4>
+      
+      <form class="ui form">
+          <div class="field">
+            <label>Project Number</label>
+            <input type="text" name="project-number" placeholder="53b/170634" [(ngModel)]="projectNumber">
+          </div>
+          <div class="field">
+            <label>JSON file URL</label>
+            <input type="text" name="json-path" placeholder="http://example.com/file.json" [(ngModel)]="jsonPath">
+          </div>
+          <button class="ui button" type="button" (click)="submitBasic()" [disabled]="projectNumber === '' || jsonPath === ''">Next</button>
+      </form>
+  </div>
+
+  <div class="ui piled segment segment2" *ngIf="activeStage === 2" [ngClass]="{ 'active': activeStage === 2,  'inactive': activeStage !== 2 }" >
+      <h4 class="ui dividing header">Please review and confirm this is the project you want to modify</h4>
+  </div>
+
+  <div class="ui piled segment segment3" *ngIf="activeStage === 3" [ngClass]="{ 'active': activeStage === 3,  'inactive': activeStage !== 3 }" >
+      Stage 3
+  </div>
+
+</div>

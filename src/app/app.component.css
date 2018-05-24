@@ -1,0 +1,46 @@
+.ui.menu .item>img:not(.ui) {
+    width: 200px;
+}
+
+.name {
+    position: absolute;
+    left: 50%;
+    margin-top: 10px;
+    font-size: 2em;
+}
+
+.navigation ul {
+    list-style-type: none;
+    text-align: center;
+}
+
+.navigation ul li {
+    display: inline-block;
+}
+
+.navigation li  {
+    display: block;
+    text-align: center;
+    border-bottom: 2px solid transparent;
+    padding: 1em;
+    transition: all 0.5s;
+}
+
+.navigation li:hover {
+    cursor: pointer;
+    border-bottom: 2px solid #CCC;
+    transition: all 0.5s;
+}
+
+.navigation li.active {
+    border-bottom: 2px solid;
+}
+
+.ui.piled.segment {
+    height: 62vh;
+}
+
+form {
+    width: 50%;
+    margin: 100px auto;
+}
