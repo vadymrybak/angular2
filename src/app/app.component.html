@@ -58,7 +58,7 @@
   <div class="ui piled segment segment2" *ngIf="activeStage === 2 && surveyDetails" [ngClass]="{ 'active': activeStage === 2,  'inactive': activeStage !== 2 }" >
       <h4 class="ui dividing header">Please review and confirm this is the project you want to modify</h4>
       <div class="ui grid">
-          <div class="four wide column">
+          <div class="six wide column">
               <table class="ui striped table">
                 <tbody>
                   <tr>
@@ -86,11 +86,11 @@
                   Continue
               </button>
           </div>
-          <div class="twelve wide column">
+          <div class="ten wide column">
             <div class="ui form">
               <div class="field">
                 <label>Survey XML</label>
-                <textarea name="txtXML" class="txtXML" [(ngModel)]="surveyDetails.xml"></textarea>
+                <textarea rows="24" name="txtXML" class="txtXML" [(ngModel)]="surveyDetails.xml"></textarea>
               </div>
             </div>
           </div>
@@ -99,6 +99,17 @@
 
   <div class="ui piled segment segment3" *ngIf="activeStage === 3" [ngClass]="{ 'active': activeStage === 3,  'inactive': activeStage !== 3 }" >
       <h4 class="ui dividing header">Results</h4>
+
+      <div class="ui icon message" *ngIf="updateXMLresult">
+        <i class="{{updateXMLresult.icon}} icon"></i>
+        <div class="content">
+          <div class="header">
+            {{ updateXMLresult.result | uppercase }}
+          </div>
+          <p>{{ updateXMLresult.additionalMessage }}</p>
+          <p *ngIf="updateXMLresult.result === 'decipher_error'"><a href="data/output.xml" target="_blank">Download</a> output.xml</p>
+        </div>
+      </div>
   </div>
 
 </div>

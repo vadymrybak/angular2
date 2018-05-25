@@ -10,20 +10,20 @@ const httpOptions = {
   };
 
 // LIVE LINKS
-// const links = {
-//   checkProject: "data/checkProject.php?pnum=",
-//   checkJSONpath : "data/checkJSON.php?jpath=",
-//   getDetails: "data/getDetails.php",
-//   updateXML: "/api/updateXML"
-// };
+const links = {
+  checkProject: "data/checkProject.php?pnum=",
+  checkJSONpath : "data/checkJSON.php?jpath=",
+  getDetails: "data/getDetails.php?pnum=",
+  updateXML: "data/updateXML.php?pnum="
+};
 
 // TEST LINKS
-const links = {
-    checkProject: "/api/checkProjectNumber/",
-    checkJSONpath : "/api/checkJSONpath/",
-    getDetails: "/api/getDetails",
-    updateXML: "/api/updateXML"
-};
+// const links = {
+//     checkProject: "/api/checkProjectNumber/",
+//     checkJSONpath : "/api/checkJSONpath/",
+//     getDetails: "/api/getDetails",
+//     updateXML: "/api/updateXML"
+// };
 
 @Injectable({
   providedIn: 'root'
@@ -34,14 +34,14 @@ export class AppDataService {
 
   // Gets project details
   getProjectDetails(projectNumber: string): Observable<SurveyDetails> {
-    return this.http.get(links.getDetails).pipe(
+    return this.http.get(`${links.getDetails}${projectNumber}`).pipe(
       map(res => res['payload'])
     );
   };
 
   // Updates project's XML
-  updateXML(projectNumber: string, jsonPath: string): Observable<Response> {
-    return this.http.get(links.updateXML).pipe(
+  updateXML(projectNumber: string, jsonPath: string): Observable<any> {
+    return this.http.get(`${links.updateXML}${projectNumber}&jpath=${jsonPath}`).pipe(
       map(res => res['payload'])
     );
   };

@@ -4,6 +4,7 @@ import { Observable, Subscription } from 'rxjs';
 import {NgForm} from '@angular/forms';
 import SurveyDetails from './models/survey-details';
 import BasicErrors from './models/basic-errors';
+import UpdateXML from './models/update-xml';
 
 @Component({
   selector: 'app-root',
@@ -22,8 +23,13 @@ export class AppComponent {
     checkJSONpath: false,
     checkProject: false
   };
+  updateXMLresult: UpdateXML = {
+    result: "",
+    additionalMessage: "",
+    icon: ""
+  };
   surveyDetails: SurveyDetails;
-  readyForStage2: boolean = true;
+  readyForStage2: boolean = false;
   readyForStage3: boolean = false;
 
   // Models
@@ -80,6 +86,19 @@ export class AppComponent {
       this.readyForStage3 = true;
       this.activeStage = 3;
       this.loading = false;
+
+      this.updateXMLresult.result = result.status;
+      this.updateXMLresult.additionalMessage = result.message;
+
+      if (result.status === "error"){
+        this.updateXMLresult.icon = "times";
+      }
+      else if (result.status === "decipher_error") {
+        this.updateXMLresult.icon = "times";
+      }
+      else {
+        this.updateXMLresult.icon = "check";
+      }
     });
   };
 
@@ -93,12 +112,13 @@ export class AppComponent {
     this.basicSetup = this.appDataService.checkBasicSetup(this.projectNumber, this.jsonPath).subscribe(data => 
       {
         console.log(data);
-        this.loading = false;
         if (data.checkProject === "bad"){
           this.errors.checkProject = true;
+          this.loading = false;
         }
         if (data.checkJSONpath === "bad"){
           this.errors.checkJSONpath = true;
+          this.loading = false;
         }
         if (data.checkJSONpath === "good" && data.checkProject === "good"){
           this.readyForStage2 = true;
@@ -106,6 +126,7 @@ export class AppComponent {
           // Proceed to fetch parameters
           this.projectDetails = this.appDataService.getProjectDetails(this.projectNumber).subscribe(project_details_data => {
             this.surveyDetails = project_details_data;
+            this.loading = false;
           });
         }
       }
