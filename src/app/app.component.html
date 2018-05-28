@@ -42,16 +42,22 @@
   <div class="ui piled segment segment1" *ngIf="activeStage === 1" [ngClass]="{ 'active': activeStage === 1,  'inactive': activeStage !== 1 }">
       <h4 class="ui dividing header">Please complete the form</h4>
 
-      <form class="ui form">
+      <form class="ui form" [formGroup]="projectForm">
           <div class="field">
             <label>Project Number</label>
-            <input type="text" name="project-number" placeholder="53b/170634" [(ngModel)]="projectNumber">
+            <input type="text" name="project-number" placeholder="53b/170634" formControlName="projectNumber">
+            <div class="ui pointing red basic label" 
+                *ngIf="projectForm.controls['projectNumber'].errors?.required && projectForm.controls['projectNumber'].dirty">Project Number is required.</div>
+              <div class="ui pointing red basic label" 
+                *ngIf="projectForm.controls['projectNumber'].errors?.minlength && projectForm.controls['projectNumber'].dirty">Project Number must be at least 6 characters long.</div>
           </div>
           <div class="field">
             <label>JSON file URL</label>
-            <input type="text" name="json-path" placeholder="http://example.com/file.json" [(ngModel)]="jsonPath">
+            <input type="text" name="json-path" placeholder="http://example.com/file.json" formControlName="projectPath">
+            <div class="ui pointing red basic label" 
+                *ngIf="projectForm.controls['projectPath'].errors?.required && projectForm.controls['projectPath'].dirty">JSON path is required.</div>
           </div>
-          <button class="ui button" type="button" (click)="submitBasic()" [disabled]="projectNumber === '' || jsonPath === ''">Next</button>
+          <button class="ui button" type="button" (click)="submitBasic()" [class.disabled]="!projectForm.valid">Next</button>
       </form>
   </div>
 

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {AppDataService} from "./app-data.service";
 import { Observable, Subscription } from 'rxjs';
 import {NgForm} from '@angular/forms';
+import { Validators, FormBuilder, Form, FormGroup } from '@angular/forms';
 import SurveyDetails from './models/survey-details';
 import BasicErrors from './models/basic-errors';
 import UpdateXML from './models/update-xml';
@@ -14,6 +15,7 @@ import UpdateXML from './models/update-xml';
 export class AppComponent {
   activeStage = 1;
   loading: boolean = false;
+  projectForm: FormGroup;
 
   basicSetup: Subscription;
   projectDetails: Subscription;
@@ -36,7 +38,17 @@ export class AppComponent {
   projectNumber: string = "";
   jsonPath: string = "";
 
-  constructor(private appDataService: AppDataService) {
+  constructor(private appDataService: AppDataService, private formBuilder: FormBuilder) {
+    this.projectForm = this.formBuilder.group({
+      projectNumber: this.formBuilder.control('', Validators.compose([
+        Validators.required,
+        Validators.minLength(6)
+      ])),
+      projectPath: this.formBuilder.control('', Validators.compose([
+        Validators.required,
+        Validators.pattern(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/g)
+      ]))
+    });
   }
 
   resetErrors(){
@@ -65,7 +77,9 @@ export class AppComponent {
   }
 
   ngOnInit() {
-
+    // this.projectForm.get('projectNumber').valueChanges.subscribe(val => {
+    //   console.log(this.projectForm.controls["projectNumber"]);
+    // });
   }
 
   ngOnDestroy(){
@@ -81,7 +95,7 @@ export class AppComponent {
 
   detailsConfirmed() {
     this.loading = true;
-    this.completeView = this.appDataService.updateXML(this.projectNumber, this.jsonPath).subscribe(result => {
+    this.completeView = this.appDataService.updateXML(this.projectForm.controls["projectNumber"].value, this.projectForm.controls["projectPath"].value).subscribe(result => {
       console.log(result);
       this.readyForStage3 = true;
       this.activeStage = 3;
@@ -109,7 +123,7 @@ export class AppComponent {
     // Check if project exists
     // Check if URL file exists
     this.loading = true;
-    this.basicSetup = this.appDataService.checkBasicSetup(this.projectNumber, this.jsonPath).subscribe(data => 
+    this.basicSetup = this.appDataService.checkBasicSetup(this.projectForm.controls["projectNumber"].value, this.projectForm.controls["projectPath"].value).subscribe(data => 
       {
         console.log(data);
         if (data.checkProject === "bad"){
@@ -124,7 +138,7 @@ export class AppComponent {
           this.readyForStage2 = true;
           this.activeStage = 2;
           // Proceed to fetch parameters
-          this.projectDetails = this.appDataService.getProjectDetails(this.projectNumber).subscribe(project_details_data => {
+          this.projectDetails = this.appDataService.getProjectDetails(this.projectForm.controls["projectNumber"].value).subscribe(project_details_data => {
             this.surveyDetails = project_details_data;
             this.loading = false;
           });
