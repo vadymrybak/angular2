@@ -31,35 +31,44 @@
 
     // Getting XML that will be replaced
     $xml = $da->FetchDecipherXML("ca", $project_number);
-    
-    // Making modification in XML
-    try{
-        $template_xml_prepared = getPreparedXML($xml["data"], json_decode($file_data));
-        
-        // If no errors => write output to file
-        file_put_contents("output.xml", $template_xml_prepared);
 
-        // Try to upload prepeared XML to Decipher
-        $update_result = $da->UpdateDecipherXML("ca", $project_number, $template_xml_prepared);
-        if ($update_result["status"] == "error"){
-            $temp["status"] = "decipher_error";
-            $temp["message"] = $update_result["message"];
-            $result["payload"] = $temp;
-        }
-        else {
-            $temp["status"] = "success";
-            $temp["message"] = "Your XML was updated successfully.";
-            $result["payload"] = $temp;
-        }
-    }
-    catch (Exception $e){
+    // Check for some keywords in XML to ensure the project is the template and not other random p#
+    if (strpos($da, 'WORD TO FIND') === false) {
         $temp["status"] = "error";
-        $temp["message"] = "Error prepearing XML. ".$e->getMessage();
+        $temp["message"] = "Template keywords were not found.";
         $result["payload"] = $temp;
     }
+    else {
+        // Making modification in XML
+        try{
+            $template_xml_prepared = getPreparedXML($xml["data"], json_decode($file_data));
+            
+            // If no errors => write output to file
+            file_put_contents("output.xml", $template_xml_prepared);
+
+            // Try to upload prepeared XML to Decipher
+            $update_result = $da->UpdateDecipherXML("ca", $project_number, $template_xml_prepared);
+            if ($update_result["status"] == "error"){
+                $temp["status"] = "decipher_error";
+                $temp["message"] = $update_result["message"];
+                $result["payload"] = $temp;
+            }
+            else {
+                $temp["status"] = "success";
+                $temp["message"] = "Your XML was updated successfully.";
+                $result["payload"] = $temp;
+            }
+        }
+        catch (Exception $e){
+            $temp["status"] = "error";
+            $temp["message"] = "Error prepearing XML. ".$e->getMessage();
+            $result["payload"] = $temp;
+        }
+    }
+
+    
 	
     echo json_encode($result);
-    //print_r($template_xml_prepared);
-    // If status is ok => try to update Decipher XML
+
 
 ?>

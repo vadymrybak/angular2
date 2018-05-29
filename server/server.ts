@@ -4,6 +4,7 @@ import checkProjectNumber from './checkProjectNumber';
 import checkJSONpath from './checkJSONpath';
 import getDetails from './getDetails';
 import updateXML from './updateXML';
+import HavePermissions from './havePermissions';
 
 
 const app: Application = express();
@@ -17,6 +18,7 @@ app.route('/api/checkProjectNumber/:id').get(checkProjectNumber);
 app.route('/api/checkJSONpath/:id').get(checkJSONpath);
 app.route('/api/getDetails').get(getDetails);
 app.route('/api/updateXML').get(updateXML);
+app.route('/api/checkPermissions').get(HavePermissions);
 
 const httpServer = app.listen(9000, () => {
     console.log("HTTP REST API Server running at http://localhost:" + httpServer.address().port);

@@ -2,6 +2,14 @@
     width: 200px;
 }
 
+.permission.hidden {
+    visibility: hidden;
+}
+
+.permission.hidden.visible {
+    visibility: visible !important;
+}
+
 .name {
     position: absolute;
     left: 50%;

@@ -13,13 +13,15 @@ import UpdateXML from './models/update-xml';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  activeStage = 1;
-  loading: boolean = false;
-  projectForm: FormGroup;
+  activeStage = 1;                    // Which view to show out of 3
+  loading: boolean = true;           // If need to show loading animation
+  projectForm: FormGroup;             // FormGroup for initial form (project number, json path)
+  havePermission: boolean;            // Determines if user has permissions to use the app
 
   basicSetup: Subscription;
   projectDetails: Subscription;
   completeView: Subscription;
+  permissions: Subscription;
 
   errors: BasicErrors = {
     checkJSONpath: false,
@@ -33,10 +35,6 @@ export class AppComponent {
   surveyDetails: SurveyDetails;
   readyForStage2: boolean = false;
   readyForStage3: boolean = false;
-
-  // Models
-  projectNumber: string = "";
-  jsonPath: string = "";
 
   constructor(private appDataService: AppDataService, private formBuilder: FormBuilder) {
     this.projectForm = this.formBuilder.group({
@@ -77,22 +75,27 @@ export class AppComponent {
   }
 
   ngOnInit() {
-    // this.projectForm.get('projectNumber').valueChanges.subscribe(val => {
-    //   console.log(this.projectForm.controls["projectNumber"]);
-    // });
+    this.loading = false;
+    this.permissions = this.appDataService.checkPermissions().subscribe(result => {
+      this.havePermission = result == "1" ? true : false;
+      console.log(this.havePermission, result)
+    });
   }
 
+  // Need to unsubscribe from all observables on destroy
   ngOnDestroy(){
     this.basicSetup.unsubscribe();
     this.projectDetails.unsubscribe();
   }
 
+  // When clicked Cancel in 2nd view. Need to return to 1st view
   detailsCancel() {
     this.activeStage = 1;
     this.readyForStage2 = false;
     this.readyForStage3 = false;
   };
 
+  // When Confirmed is clicked in 2nd view. Need to move to 3rd view
   detailsConfirmed() {
     this.loading = true;
     this.completeView = this.appDataService.updateXML(this.projectForm.controls["projectNumber"].value, this.projectForm.controls["projectPath"].value).subscribe(result => {
@@ -116,6 +119,7 @@ export class AppComponent {
     });
   };
 
+  // When Next is clicked in 1st view
   submitBasic() {
     this.resetErrors();
     this.readyForStage2 = false;
@@ -126,11 +130,11 @@ export class AppComponent {
     this.basicSetup = this.appDataService.checkBasicSetup(this.projectForm.controls["projectNumber"].value, this.projectForm.controls["projectPath"].value).subscribe(data => 
       {
         console.log(data);
-        if (data.checkProject === "bad"){
+        if (data.checkProject === "not found"){
           this.errors.checkProject = true;
           this.loading = false;
         }
-        if (data.checkJSONpath === "bad"){
+        if (data.checkJSONpath === "not found"){
           this.errors.checkJSONpath = true;
           this.loading = false;
         }

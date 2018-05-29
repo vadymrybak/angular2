@@ -10,20 +10,21 @@ const httpOptions = {
   };
 
 // LIVE LINKS
-const links = {
-  checkProject: "data/checkProject.php?pnum=",
-  checkJSONpath : "data/checkJSON.php?jpath=",
-  getDetails: "data/getDetails.php?pnum=",
-  updateXML: "data/updateXML.php?pnum="
-};
+// const links = {
+//   checkProject: "data/checkProject.php?pnum=",
+//   checkJSONpath : "data/checkJSON.php?jpath=",
+//   getDetails: "data/getDetails.php?pnum=",
+//   updateXML: "data/updateXML.php?pnum="
+// };
 
 // TEST LINKS
-// const links = {
-//     checkProject: "/api/checkProjectNumber/",
-//     checkJSONpath : "/api/checkJSONpath/",
-//     getDetails: "/api/getDetails",
-//     updateXML: "/api/updateXML"
-// };
+const links = {
+    checkProject: "/api/checkProjectNumber/",
+    checkJSONpath : "/api/checkJSONpath/",
+    getDetails: "/api/getDetails",
+    updateXML: "/api/updateXML",
+    checkPermissions: "/api/checkPermissions"
+};
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +32,12 @@ const links = {
 export class AppDataService {
 
   constructor(private http:HttpClient) { }
+
+  checkPermissions(): Observable<any> {
+    return this.http.get(`${links.checkPermissions}`).pipe(
+      map(res => res['payload'])
+    );
+  };
 
   // Gets project details
   getProjectDetails(projectNumber: string): Observable<SurveyDetails> {
